@@ -26,3 +26,7 @@ The grammar is the following:
 - lexer.py builds tokens consumed by parser.py
 - parser.py builds syntax tree in prefix order
 - main.py initiates the program using an input file
+
+
+### LICENSE
+This code is for educational/demonstration purposes only! Copying of this code is strictly prohibited!
