@@ -8,7 +8,7 @@ This project is used to build a parser for logic language. The tokens are as fol
 - RPAR = )
 - NOT = !
 - AND = /\
-- OR = \/
+- OR = \\/
 - IMPLIES = ‘=>’
 - IFF = ‘<=>’
 
