@@ -8,7 +8,7 @@ class Location:
 
 
 class TokenKind:
-    ID = "ID" # identifier
+    ID = "ID" # identifier [A-Z]+
     LPAR = "LPAR" # (
     RPAR = "RPAR" # )
     NOT = "NOT" # !
@@ -17,7 +17,7 @@ class TokenKind:
     IMPLIES = "IMPLIES"  # =>
     IFF = "IFF" # <=>
     COMMA = "COMMA" # ,
-    UNKNOWN = "UNKNOWN" # Anything that is not a state
+    UNKNOWN = "UNKNOWN" # Anything that is not a token
 
 
 
@@ -39,15 +39,15 @@ class Lexer:
 
     def tokenize(self):
         current_match = None
+        current_type = None
         tokens = list()
         print self.text
-        for c in self.text:
-            current_type = None
+        for index, c in enumerate(self.text):
             if c in UPPER_CASE:
                 if (current_type == TokenKind.ID):
                     current_match += c
-                    continue
-                current_match = c
+                else:
+                    current_match = c
                 current_type = TokenKind.ID
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
             elif c == "(":
@@ -66,12 +66,14 @@ class Lexer:
                 if (self.text[self.col] == "\\"):
                     current_match = c + self.text[self.col]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.AND, current_match))
+                    # Probably good to check if this isn't part of a previous OR
                 else:
                     raise Exception("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
             elif c == "\\":
                 if (self.text[self.col] == "/"):
                     current_match = c + self.text[self.col]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.OR, current_match))
+                    # Probably good to check if this isn't part of a previous AND
                 else:
                     raise Exception("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
             elif c == "=":
@@ -96,4 +98,6 @@ class Lexer:
             # raise NotImplementedError
 
             self.col += 1
+        # for token in tokens:
+        #     print(str(token) + ":")
         return tokens
