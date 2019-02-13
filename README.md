@@ -28,5 +28,5 @@ The grammar is the following:
 - main.py initiates the program using an input file
 
 
-### LICENSE
-This code is for educational/demonstration purposes only! Copying of this code is strictly prohibited!
+## LICENSE
+#### This code is for educational/demonstration purposes only! Copying of this code is strictly prohibited!
