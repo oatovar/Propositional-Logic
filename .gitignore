@@ -1,0 +1,11 @@
+# Ignore all txt files
+*.txt
+
+# Ignore vscode folder
+.vscode/
+
+# Ignore all compiled python byte code
+*.pyc
+
+# Ignore test script
+test.py
