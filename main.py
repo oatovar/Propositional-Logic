@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
+    unittest.main()
     # test_string = "!Q)P!"
     # lexer = Lexer(test_string).tokenize()
     # parse_tree = Parser().parse(lexer)
