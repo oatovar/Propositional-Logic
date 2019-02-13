@@ -58,7 +58,7 @@ class Lexer:
                 self.col = c + 1
             elif self.text[c] == "(":
                 current_match = self.text[c]
-                tokens.append(Token(Location(self.line, self.col), TokenKind.RPAR, current_match))
+                tokens.append(Token(Location(self.line, self.col), TokenKind.LPAR, current_match))
             elif self.text[c] == ")":
                 current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.RPAR, current_match))
@@ -89,8 +89,8 @@ class Lexer:
                 # Check to see if this does not belong to a '<=>' token
                 # and if it belongs to a '=>' IMPLIES token
                 if (c+1 < len(self.text)):
-                    if (self.text[c+1] == ">"):
-                        current_match = self.text[c, c+2]
+                    if (self.text[c-1] != "<" and self.text[c+1] == ">"):
+                        current_match = self.text[c:c+2]
                         tokens.append(Token(Location(self.line, self.col), TokenKind.IMPLIES, current_match))
                         self.col += 2
                     else:
@@ -105,7 +105,7 @@ class Lexer:
                     # Check to see if the following two characters are '=' and '>'
                     # which would form '<=>', the token we are looking for
                     if (self.text[c+1] == "=" and self.text[c+2] == ">"):
-                        current_match = self.text[c, c+3]
+                        current_match = self.text[c:c+3]
                         c += 2
                         tokens.append(Token(Location(self.line, self.col), TokenKind.IFF, current_match))
                         self.col += 3
@@ -113,6 +113,13 @@ class Lexer:
                         # Print an exception and break out of the loop.
                         print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
                         break
+            elif self.text[c] == ">":
+                current_match = self.text[c]
+                if (self.text[c-1] == "=" and self.text[c] == ">"):
+                    pass
+                else:
+                    print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                    break
             elif self.text[c] == " ":
                 current_match = None
                 pass
@@ -124,6 +131,7 @@ class Lexer:
                 self.col = 0
             else:
                 current_match = self.text[c]
+                print(self.text[c])
                 tokens.append(Token(Location(self.line, self.col), TokenKind.UNKNOWN, current_match))
                 print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
                 break
