@@ -44,11 +44,15 @@ class Lexer:
         print self.text
         for c in range(len(self.text)):
             if self.text[c] in UPPER_CASE:
-                if (current_type == TokenKind.ID):
-                    current_match += self.text[c]
-                else:
-                    current_match = self.text[c]
                 current_type = TokenKind.ID
+                current_match = self.text[c]
+                while (c + 1 < len(self.text)):
+                    if (self.text[c+1] in UPPER_CASE):
+                        c += 1
+                        self.col = c
+                        current_match += self.text[c]
+                    else:
+                        break
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
             elif self.text[c] == "(":
                 current_match = self.text[c]
@@ -73,7 +77,7 @@ class Lexer:
             elif self.text[c] == "\\":
                 if (self.text[c-1] == "/"):
                     pass
-                elif (self.text[self.col] == "/"):
+                elif (self.text[c] == "/"):
                     current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.OR, current_match))
                     # Probably good to check if this isn't part of a previous AND
