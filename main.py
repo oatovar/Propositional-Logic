@@ -17,5 +17,5 @@ from parser import Parser
 
 if __name__ == '__main__':
     # unittest.main()
-    l = Lexer("!Q").tokenize()
+    l = Lexer("!Q/\\").tokenize()
     parse_tree = Parser().parse(l)

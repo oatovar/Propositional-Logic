@@ -16,6 +16,7 @@ class Parser:
         self.loc = Location(0, 0)
         self.tokens = list()
         self.index = 0
+        self.stack = list()
 
     def parse(self, tokenList):
         # Try to parse the tree
@@ -32,6 +33,7 @@ class Parser:
             else:
                 print("Syntax Error at line " + str(t.loc.line) + " column " +
                 str(t.loc.col) + ".")
+                return
         # If the parser throws an error then print out the exception
         except Exception as E:
             print E
@@ -69,10 +71,12 @@ class Parser:
             elif (token.kind == "ID"):
                 self.atomic()
             else:
-                raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                return
         else:
             token = self.tokens[self.index]
-            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            return
 
     def atomic(self):
         print sys._getframe().f_code.co_name
@@ -82,10 +86,12 @@ class Parser:
                 self.ID()
                 self.index += 1
             else:
-                raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                # return
         else:
             token = self.tokens[self.index]
-            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            return
 
     def compound(self):
         print sys._getframe().f_code.co_name
@@ -100,6 +106,7 @@ class Parser:
             # LPAR HERE
             elif (token.kind == "LPAR"):
                 self.LPAR()
+                # self.stack.append(token)
                 self.index += 1
                 self.proposition()
                 self.RPAR()
@@ -112,10 +119,12 @@ class Parser:
                 self.index += 1
                 self.proposition()
             else:
-                raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+                return
         else:
             token = self.tokens[self.index]
-            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            return
 
     def connective(self):
         print sys._getframe().f_code.co_name
@@ -123,7 +132,8 @@ class Parser:
         if (self.index < len(self.tokens)):
             token = self.tokens[self.index]
         else:
-            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            return
         if (token.kind == "AND"):
             self.AND()
         elif(token.kind == "OR"):
@@ -134,7 +144,8 @@ class Parser:
             self.IFF()
         else:
             token = self.tokens[self.index]
-            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            return
     
     # prints ID
     def ID(self):

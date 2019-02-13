@@ -42,59 +42,64 @@ class Lexer:
         current_type = None
         tokens = list()
         print self.text
-        for index, c in enumerate(self.text):
-            if c in UPPER_CASE:
+        for c in range(len(self.text)):
+            if self.text[c] in UPPER_CASE:
                 if (current_type == TokenKind.ID):
-                    current_match += c
+                    current_match += self.text[c]
                 else:
-                    current_match = c
+                    current_match = self.text[c]
                 current_type = TokenKind.ID
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
-            elif c == "(":
-                current_match = c
+            elif self.text[c] == "(":
+                current_match = self.text[c]
                 current_type = TokenKind.LPAR
                 tokens.append(Token(Location(self.line, self.col), TokenKind.RPAR, current_match))
-            elif c == ")":
-                current_match = c
+            elif self.text[c] == ")":
+                current_match = self.text[c]
                 current_type = TokenKind.RPAR
                 tokens.append(Token(Location(self.line, self.col), TokenKind.RPAR, current_match))
-            elif c == "!":
-                current_match = c
+            elif self.text[c] == "!":
+                current_match = self.text[c]
                 current_type = TokenKind.NOT
                 tokens.append(Token(Location(self.line, self.col), TokenKind.NOT, current_match))
-            elif c == "/":
+            elif self.text[c] == "/":
                 if (self.text[self.col] == "\\"):
-                    current_match = c + self.text[self.col]
+                    current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.AND, current_match))
                     # Probably good to check if this isn't part of a previous OR
                 else:
-                    raise Exception("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
-            elif c == "\\":
-                if (self.text[self.col] == "/"):
-                    current_match = c + self.text[self.col]
+                    print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                    break
+            elif self.text[c] == "\\":
+                if (self.text[c-1] == "/"):
+                    pass
+                elif (self.text[self.col] == "/"):
+                    current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.OR, current_match))
                     # Probably good to check if this isn't part of a previous AND
                 else:
-                    raise Exception("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
-            elif c == "=":
-                current_match = c
+                    print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                    break
+            elif self.text[c] == "=":
+                current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.IMPLIES, current_match))
-            elif c == "<":
-                current_match = c
+            elif self.text[c] == "<":
+                current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.IFF, current_match))
-            elif c == " ":
+            elif self.text[c] == " ":
                 current_match = None
                 pass
-            elif c == ",":
-                current_match = c
+            elif self.text[c] == ",":
+                current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.COMMA, current_match))
-            elif c == "\n":
+            elif self.text[c] == "\n":
                 self.line += 1
-                self.col = 1
+                self.col = 0
             else:
-                current_match = c
+                current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.UNKNOWN, current_match))
-                raise Exception("Syntax Error at line " + self.line + " column " + self.col + ".")
+                print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                break
             # raise NotImplementedError
 
             self.col += 1
