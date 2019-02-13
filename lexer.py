@@ -41,7 +41,8 @@ class Lexer:
         current_match = None
         tokens = list()
         print self.text
-        for c in range(len(self.text)):
+        c = 0 # current character index
+        while c < len(self.text):
             if self.text[c] in UPPER_CASE:
                 current_match = self.text[c]
                 while (c + 1 < len(self.text)):
@@ -50,6 +51,8 @@ class Lexer:
                         current_match += self.text[c]
                     else:
                         break
+                # print "Index at " + str(c)
+                # print "Appending " + current_match
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
                 # Advancing the column later is necessary so that the original spot is not lost
                 self.col = c + 1
@@ -127,6 +130,13 @@ class Lexer:
             # raise NotImplementedError
 
             self.col += 1
+            c += 1
+        # Used to test if the tokens and positions are being grabbed correctly
+        # tokenValues = list()
+        # tokenPositions = list()
         # for token in tokens:
-        #     print(str(token) + ":")
+        #     tokenValues.append(token.value)
+        #     tokenPositions.append(token.loc.col)
+        # print tokenValues
+        # print tokenPositions
         return tokens
