@@ -47,11 +47,12 @@ class Lexer:
                 while (c + 1 < len(self.text)):
                     if (self.text[c+1] in UPPER_CASE):
                         c += 1
-                        self.col = c
                         current_match += self.text[c]
                     else:
                         break
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
+                # Advancing the column later is necessary so that the original spot is not lost
+                self.col = c + 1
             elif self.text[c] == "(":
                 current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.RPAR, current_match))
@@ -62,12 +63,12 @@ class Lexer:
                 current_match = self.text[c]
                 tokens.append(Token(Location(self.line, self.col), TokenKind.NOT, current_match))
             elif self.text[c] == "/":
-                if (self.text[c-1] == "/"):
+                # Probably good to check if this isn't part of a previous OR
+                if (self.text[c-1] == "\\"):
                     pass
                 elif (self.text[c+1] == "\\"):
                     current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.AND, current_match))
-                    # Probably good to check if this isn't part of a previous OR
                 else:
                     print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
                     break
@@ -82,11 +83,33 @@ class Lexer:
                     print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
                     break
             elif self.text[c] == "=":
-                current_match = self.text[c]
-                tokens.append(Token(Location(self.line, self.col), TokenKind.IMPLIES, current_match))
+                # Check to see if this does not belong to a '<=>' token
+                # and if it belongs to a '=>' IMPLIES token
+                if (c+1 < len(self.text)):
+                    if (self.text[c+1] == ">"):
+                        current_match = self.text[c, c+2]
+                        tokens.append(Token(Location(self.line, self.col), TokenKind.IMPLIES, current_match))
+                        self.col += 2
+                    else:
+                        print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                        break
+                else:
+                    print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                    break
             elif self.text[c] == "<":
                 current_match = self.text[c]
-                tokens.append(Token(Location(self.line, self.col), TokenKind.IFF, current_match))
+                if (c+2 < len(self.text)):
+                    # Check to see if the following two characters are '=' and '>'
+                    # which would form '<=>', the token we are looking for
+                    if (self.text[c+1] == "=" and self.text[c+2] == ">"):
+                        current_match = self.text[c, c+3]
+                        c += 2
+                        tokens.append(Token(Location(self.line, self.col), TokenKind.IFF, current_match))
+                        self.col += 3
+                    else:
+                        # Print an exception and break out of the loop.
+                        print("Syntax Error at line " + str(self.line) + " column " + str(self.col) + ".")
+                        break
             elif self.text[c] == " ":
                 current_match = None
                 pass
