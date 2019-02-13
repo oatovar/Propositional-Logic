@@ -40,7 +40,7 @@ class Lexer:
     def tokenize(self):
         current_match = None
         tokens = list()
-        print self.text
+        print "Proposition: " + self.text
         c = 0 # current character index
         while c < len(self.text):
             if self.text[c] in UPPER_CASE:
@@ -52,7 +52,7 @@ class Lexer:
                     else:
                         break
                 # print "Index at " + str(c)
-                # print "Appending " + current_match
+                # print "Appending " + current_match + " " + str(self.col)
                 tokens.append(Token(Location(self.line, self.col), TokenKind.ID, current_match))
                 # Advancing the column later is necessary so that the original spot is not lost
                 self.col = c + 1
@@ -68,7 +68,9 @@ class Lexer:
             elif self.text[c] == "/":
                 # Probably good to check if this isn't part of a previous OR
                 if (self.text[c-1] == "\\"):
-                    pass
+                    c += 1
+                    self.col = c + 1
+                    continue
                 elif (self.text[c+1] == "\\"):
                     current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.AND, current_match))
@@ -77,8 +79,10 @@ class Lexer:
                     break
             elif self.text[c] == "\\":
                 if (self.text[c-1] == "/"):
-                    pass
-                elif (self.text[c] == "/"):
+                    c += 1
+                    self.col = c + 1
+                    continue
+                elif (self.text[c+1] == "/"):
                     current_match = self.text[c] + self.text[c+1]
                     tokens.append(Token(Location(self.line, self.col), TokenKind.OR, current_match))
                     # Probably good to check if this isn't part of a previous AND

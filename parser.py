@@ -25,7 +25,7 @@ class Parser:
             token_values = list()
             for token in tokenList:
                 token_values.append(token.kind)
-            print(token_values)
+            print("LEXER: " + str(token_values))
             t = self.tokens[self.index]
             self.loc = t.loc
             if (t.kind == "ID" or t.kind == "LPAR" or 
@@ -33,11 +33,11 @@ class Parser:
             or t.kind == "OR" or t.kind == "IMPLIES" or t.kind == "IFF"
             or t.kind == "COMMA" or t.kind == "UNKNOWN"):
                 self.propositions()
-                return self.results
+                print("PARSER\t: " + str(self.results))
             else:
-                print("Syntax Error at line " + str(t.loc.line) + " column " +
+                self.results = ("Syntax Error at line " + str(t.loc.line) + " column " +
                 str(t.loc.col) + ".")
-                return
+                return self.results
         # If the parser throws an error then print out the exception
         except Exception as E:
             print E
@@ -57,18 +57,18 @@ class Parser:
     def more_proposition(self):
         # print sys._getframe().f_code.co_name
         self.results.append("more_proposition")
-        if (self.index < len(self.tokens)):
-            token = self.tokens[self.index]
-            if (token.kind == "COMMA"):
-                #print self.tokens[self.index].kind
-                self.COMMA()
-                self.index += 1
-                #print self.tokens[self.index].kind
-                self.propositions()
-            else:
-                self.epsilon()
-        else:
+        if (self.index >= len(self.tokens)-1):
             self.epsilon()
+        elif (self.tokens[self.index].kind in ("COMMA")):
+            self.COMMA()
+            self.index += 1
+            self.propositions()
+        else:
+            self.index += 1
+            #print "ERROR"
+            #token = self.tokens[self.index]
+            self.results = "Syntax Error at line "+ str(self.tokens[self.index].loc.line) + " column " + str(self.tokens[self.index].loc.col) + "."
+            #raise Exception("ERROR")
     
     def proposition(self):
         # print sys._getframe().f_code.co_name
@@ -78,18 +78,20 @@ class Parser:
             #print(token.kind)
             if (token.kind == "LPAR" or token.kind == "NOT"):
                 self.compound()
-            elif (token.kind == "ID" and self.index < len(self.tokens) - 1):
-                if (self.tokens[self.index+1].kind in ("AND", "OR", "IMPLIES", "IFF")):
-                    self.compound()
+            elif (token.kind == "ID"):
+                if (self.index+1 < len(self.tokens)):
+                    # print self.index+1
+                    # print len(self.tokens)
+                    if (self.tokens[self.index+1].kind in ("AND", "OR", "IMPLIES", "IFF")):
+                        self.compound()
                 else:
                     self.atomic()
                     self.index += 1
             else:
-                print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
-                return
+                raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
         else:
             token = self.tokens[self.index]
-            print("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
+            raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
             return
 
     def atomic(self):
@@ -196,7 +198,6 @@ class Parser:
     def COMMA(self):
         # print sys._getframe().f_code.co_name
         self.results.append("COMMA")
-        print("COMMA REACHED")
 
     # prints AND
     def AND(self):
