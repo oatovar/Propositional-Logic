@@ -20,8 +20,8 @@ if __name__ == '__main__':
     # unittest.main()
     file = open('input.txt', 'r')
     for index, line in enumerate(file):
-        print ("Input #" + str(index+1) + ": ")
-        print (line)
+        # print ("Input #" + str(index+1) + ": ")
+        # print (line)
         lexer = Lexer(line).tokenize()
         # parse_tree = Parser().parse(lexer)
         generator = CodeGenerator(lexer)

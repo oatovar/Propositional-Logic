@@ -107,7 +107,9 @@ class CodeGenerator:
             if i < len(props)-1:
                 result += "prop" + str(i + 1) + " = " + prop + "\n"
             else:
+                result += "\n"
                 result += "f = " + prop + "\n"
+                result += "\n"
 
         result += "print is_sat(f)\n"
         return result
@@ -159,10 +161,7 @@ class CodeGenerator:
         # Convert the tokens into postfix notation
         result = self.infixToPostfix(self.tokens)
         if (result != -1):
-            for key in result:
-                print(str(key.value)),
-            print('\n')
-
             result = self.parse(result)
             file.write(result)
-            print(result)
+        else:
+            print("False")
