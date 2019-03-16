@@ -47,12 +47,74 @@ class CodeGenerator:
 
         return postfix
     
+    def parse(self, input):
+        result = "" # Result to return
+        stack = list() # Stack used for postfix parsing
+        props = list() # Props that have been parsed
+        a = None
+        b = None
+        for i in input:
+            if i.kind == "ID":
+                stack.append(i.value)
+            elif i.kind == "AND":
+                a = stack.pop()
+                b = stack.pop()
+                prop = "And(" + a + ", " + b + ")"
+                props.append(prop)
+            elif i.kind == "OR":
+                a = stack.pop()
+                b = stack.pop()
+                prop = "Or(" + a + ", " + b + ")"
+                props.append(prop)
+            elif i.kind == "NOT":
+                if len(stack) > 0:
+                    a = stack.pop()
+                else:
+                    a = props[-1]
+                prop = "Not(" + a + ")"
+                props.append(prop)
+            elif i.kind == "IFF":
+                if len(stack) > 0:
+                    a = stack.pop()
+                    b = stack.pop()
+                else:
+                    a = props[-1]
+                    b = props[-2]
+                prop = "Iff(" + a + ", " + b + ")"
+                props.append(prop)
+            elif i.kind == "IMPLIES":
+                if len(stack) > 0:
+                    a = stack.pop()
+                    b = stack.pop()
+                else:
+                    a = props[-1]
+                    b = props[-2]
+                prop = "Implies(" + a + ", " + b + ")"
+                props.append(prop)
+            elif i.kind == "COMMA":
+                if len(stack) > 0:
+                    a = stack.pop()
+                    b = stack.pop()
+                else:
+                    a = props[-1]
+                    b = props[-2]
+                prop = "And(" + a + ", " + b + ")"
+                props.append(prop)
+            else:
+                pass
+
+        for i, prop in enumerate(props):
+            if i < len(props)-1:
+                result += "prop" + str(i + 1) + " = " + prop + "\n"
+            else:
+                result += "f = " + prop + "\n"
+
+        result += "print is_sat(f)\n"
+        return result
+    
     def generate(self):
         # Open the file handle that we will write to
         file = open("constraints.txt", "w")
-
-        # Proposition Count
-        propCount = 1
 
         # Check to see what imports are needed
         for token in self.tokens:
@@ -88,12 +150,12 @@ class CodeGenerator:
         # First Write out the Symbols necessary for the function
         for token in self.tokens:
             if token.kind == "ID" and token.value not in symbols:
-                file.write(str(token.value) + ' = ' + 'Symbol("' + token.value + '")\n\n')
+                file.write(str(token.value) + ' = ' + 'Symbol("' + token.value + '")\n')
                 symbols.append(token.value)
-            if token.kind == "COMMA":
-                propCount += 1
-        file.write("# Proposition Count: " + str(propCount) + "\n\n")
-        
+
+        # Strictly used for pretty printing
+        file.write("\n")
+
         # Convert the tokens into postfix notation
         result = self.infixToPostfix(self.tokens)
         if (result != -1):
@@ -101,3 +163,6 @@ class CodeGenerator:
                 print(str(key.value)),
             print('\n')
 
+            result = self.parse(result)
+            file.write(result)
+            print(result)
