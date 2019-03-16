@@ -33,7 +33,7 @@ class Parser:
             or t.kind == "OR" or t.kind == "IMPLIES" or t.kind == "IFF"
             or t.kind == "COMMA" or t.kind == "UNKNOWN"):
                 self.propositions()
-                print("PARSER\t: " + str(self.results))
+                print("PARSER: " + str(self.results))
             else:
                 self.results = ("Syntax Error at line " + str(t.loc.line) + " column " +
                 str(t.loc.col) + ".")
@@ -92,7 +92,6 @@ class Parser:
         else:
             token = self.tokens[self.index]
             raise Exception("Syntax Error at line "+ str(token.loc.line) + " column " + str(token.loc.col) + ".")
-            return
 
     def atomic(self):
         # print sys._getframe().f_code.co_name
