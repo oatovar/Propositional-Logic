@@ -3,6 +3,7 @@
 import unittest
 from lexer import Lexer, TokenKind
 from parser import Parser
+from code_generation import CodeGenerator
 
 class Test(unittest.TestCase):
     def test1(self):
@@ -16,15 +17,14 @@ class Test(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
-    # test_string = "!Q)P!"
-    # lexer = Lexer(test_string).tokenize()
-    # parse_tree = Parser().parse(lexer)
-    
+    # unittest.main()
     file = open('input.txt', 'r')
     for index, line in enumerate(file):
         print ("Input #" + str(index+1) + ": ")
+        print (line)
         lexer = Lexer(line).tokenize()
-        parse_tree = Parser().parse(lexer)
-        print "\n\n"
-        print "-------------------------"
+        # parse_tree = Parser().parse(lexer)
+        generator = CodeGenerator(lexer)
+        generator.generate()
+        # print "\n\n"
+        # print "-------------------------"
