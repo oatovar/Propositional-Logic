@@ -40,7 +40,7 @@ class Lexer:
     def tokenize(self):
         current_match = None
         tokens = list()
-        print "Proposition: " + self.text
+        # print "Proposition: " + self.text
         c = 0 # current character index
         while c < len(self.text):
             if self.text[c] in UPPER_CASE:
