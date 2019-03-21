@@ -116,37 +116,41 @@ class CodeGenerator:
     
     def generate(self):
         # Open the file handle that we will write to
-        file = open("constraints.txt", "w")
+        file = open("constraints.py", "w")
 
+        file.write("#!/usr/bin/env python2\n");
+
+
+        file.write('from pysmt.shortcuts import Symbol, And, Not, Or, Implies, Iff, is_sat\n\n');
         # Check to see what imports are needed
-        for token in self.tokens:
-            if (token.kind == "ID" and "Symbol" not in self.imports):
-                self.imports.append("Symbol")
-            if (token.kind == "LPAR" or token.kind == "RPAR"):
-                continue
-            if (token.kind == "NOT" and "Not" not in self.imports):
-                self.imports.append("Not")
-            if (token.kind == "OR" and "Or" not in self.imports):
-                self.imports.append("Or")
-            if (token.kind == "AND" and "And" not in self.imports):
-                self.imports.append("And")
-            if (token.kind == "IMPLIES" and "Implies" not in self.imports):
-                self.imports.append("Implies")
-            if (token.kind == "IFF" and "Iff" not in self.imports):
-                self.imports.append("Iff")
+        # for token in self.tokens:
+        #     if (token.kind == "ID" and "Symbol" not in self.imports):
+        #         self.imports.append("Symbol")
+        #     if (token.kind == "LPAR" or token.kind == "RPAR"):
+        #         continue
+        #     if (token.kind == "NOT" and "Not" not in self.imports):
+        #         self.imports.append("Not")
+        #     if (token.kind == "OR" and "Or" not in self.imports):
+        #         self.imports.append("Or")
+        #     if (token.kind == "AND" and "And" not in self.imports):
+        #         self.imports.append("And")
+        #     if (token.kind == "IMPLIES" and "Implies" not in self.imports):
+        #         self.imports.append("Implies")
+        #     if (token.kind == "IFF" and "Iff" not in self.imports):
+        #         self.imports.append("Iff")
         
-        # Write the necessary import statement
-        file.write('from pysmt.shortcuts import ')
-        index = 0
-        while index < len(self.imports):
-            file.write(self.imports[index])
-            file.write(', ')
-            index += 1
-        # Delete the index variable that is no longer in use
-        del index
+        # # Write the necessary import statement
+        # file.write('from pysmt.shortcuts import ')
+        # index = 0
+        # while index < len(self.imports):
+        #     file.write(self.imports[index])
+        #     file.write(', ')
+        #     index += 1
+        # # Delete the index variable that is no longer in use
+        # del index
         
-        # Append the last import which is always 'is_sat'
-        file.write('is_sat\n\n')
+        # # Append the last import which is always 'is_sat'
+        # file.write('is_sat\n\n')
         
         symbols = list()
         # First Write out the Symbols necessary for the function
