@@ -2,6 +2,7 @@
 
 import subprocess
 import string
+import unittest
 
 class CodeGenerator:
     def __init__(self, tokens):
@@ -190,6 +191,14 @@ class Token:
         return str(self.kind)
 
 
+
+class Test(unittest.TestCase):
+    def test0(self):
+        lexer = Lexer('P/\\!Q,!P<=>!Q').tokenize()
+        generator = CodeGenerator(lexer)
+        generator.generate()
+        result = subprocess.check_output(['python2', 'constraints.py'])
+        self.assertEqual(result.decode('UTF-8').strip(), 'False')
 class Lexer:
     def __init__(self, text):
         self.text = text
@@ -313,7 +322,7 @@ class Lexer:
         return tokens
 
 if __name__ == '__main__':
-    # unittest.main()
+    unittest.main()
     file = open('input.txt', 'r')
     for index, line in enumerate(file):
         print ("Input #" + str(index+1) + ": ")
