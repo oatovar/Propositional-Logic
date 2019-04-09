@@ -15,11 +15,13 @@ class CodeGenerator:
             return False
 
     def precedence(self, token):
-        if token.kind in ['COMMA']:
+        if token.kind in ['NOT']:
+            return 4
+        elif token.kind in ['AND']:
             return 3
-        elif token.kind in ['AND', 'OR', 'IMPLIES', 'IFF']:
+        elif token.kind in ['OR', 'IMPLIES', 'IFF']:
             return 2
-        elif token.kind == 'NOT':
+        elif token.kind in ['COMMA']:
             return 1
         else:
             return 0
@@ -62,8 +64,16 @@ class CodeGenerator:
             if i.kind == "ID":
                 stack.append(i.value)
             elif i.kind == "AND":
-                a = stack.pop()
-                b = stack.pop()
+                if (len(stack) > 0):
+                    a = stack.pop()
+                else:
+                    a = props.pop()
+                if (len(stack) > 0):
+                    b = stack.pop()
+                else:
+                    b = props.pop()
+                # a = stack.pop()
+                # b = stack.pop()
                 prop = "And(" + a + ", " + b + ")"
                 props.append(prop)
             elif i.kind == "OR":
@@ -75,7 +85,7 @@ class CodeGenerator:
                 if len(stack) > 0:
                     a = stack.pop()
                 else:
-                    a = props[-1]
+                    a = props.pop()
                 prop = "Not(" + a + ")"
                 props.append(prop)
             elif i.kind == "IFF":
@@ -83,8 +93,8 @@ class CodeGenerator:
                     a = stack.pop()
                     b = stack.pop()
                 else:
-                    a = props[-1]
-                    b = props[-2]
+                    a = props.pop()
+                    b = props.pop()
                 prop = "Iff(" + a + ", " + b + ")"
                 props.append(prop)
             elif i.kind == "IMPLIES":
@@ -293,7 +303,7 @@ class Lexer:
             self.col += 1
             c += 1
         # Used to test if the tokens and positions are being grabbed correctly
-        # tokenValues = list()
+        # tokenValues = list()``
         # tokenPositions = list()
         # for token in tokens:
         #     tokenValues.append(token.value)

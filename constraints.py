@@ -3,12 +3,10 @@ from pysmt.shortcuts import Symbol, And, Not, Or, Implies, Iff, is_sat
 
 P = Symbol("P")
 Q = Symbol("Q")
-X = Symbol("X")
-Y = Symbol("Y")
 
-prop1 = Or(Q, P)
-prop2 = Implies(Y, X)
+prop1 = And(P, Not(Q))
+prop2 = Iff(Not(Q), Not(P))
 
-f = And(Implies(Y, X), Or(Q, P))
+f = And(Iff(Not(Q), Not(P)), And(P, Not(Q)))
 
 print is_sat(f)
